@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-brand-blue: #1A1F2E;
+  --color-brand-gray: #F7F8FA;
+}
+
+* {
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+
+h1, h2, h3 {
+  font-family: 'Sora', system-ui, sans-serif;
+}
+
+/* Scrollbar fine */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: #F7F8FA;
+}
+::-webkit-scrollbar-thumb {
+  background: #CBD2DB;
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #8896A5;
+}
