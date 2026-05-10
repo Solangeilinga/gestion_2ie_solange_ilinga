@@ -3,7 +3,7 @@ const db = require('../config/db');
 exports.getAll = (req, res) => {
   const { search, pays_id } = req.query;
   let sql = `
-    SELECT e.*, p.libelle AS pays_libelle, c.libelle AS civilite_libelle, c.abreviation
+    SELECT e.*, p.libelle AS pays_libelle, p.nationalite AS pays_nationalite, c.libelle AS civilite_libelle, c.abreviation
     FROM etudiants e
     JOIN pays p      ON p.id = e.pays_id
     JOIN civilites c ON c.id = e.civilites_id
@@ -25,7 +25,7 @@ exports.getAll = (req, res) => {
 
 exports.getOne = (req, res) => {
   db.query(
-    `SELECT e.*, p.libelle AS pays_libelle, c.libelle AS civilite_libelle, c.abreviation
+    `SELECT e.*, p.libelle AS pays_libelle, p.nationalite AS pays_nationalite, c.libelle AS civilite_libelle, c.abreviation
      FROM etudiants e
      JOIN pays p      ON p.id = e.pays_id
      JOIN civilites c ON c.id = e.civilites_id

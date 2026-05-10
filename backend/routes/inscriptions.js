@@ -1,9 +1,11 @@
-const router = require('express').Router();
+// routes/inscriptions.js
+const router      = require('express').Router();
 const verifyToken = require('../middleware/verifyToken');
-const ctrl = require('../controllers/inscriptionsController');
+const ctrl        = require('../controllers/inscriptionsController');
 
 router.use(verifyToken);
-router.get('/stats', ctrl.getStats);
+
+// ✅ getStats supprimé — utiliser /api/stats/dashboard à la place
 router.get('/',       ctrl.getAll);
 router.get('/:id',    ctrl.getOne);
 router.post('/',      ctrl.create);

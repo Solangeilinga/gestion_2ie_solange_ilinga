@@ -38,6 +38,98 @@ const inputBase = {
   transition: 'border-color 0.15s, box-shadow 0.15s',
 };
 
+const labelStyle = { display: 'block', fontSize: '13px', fontWeight: 500, color: C.textPrimary, marginBottom: '6px' };
+const errStyle   = { fontSize: '12px', color: '#DC2626', marginTop: '4px' };
+
+/* ── Composants définis EN DEHORS du composant parent ── */
+
+const Field = ({ label, fieldKey, type = 'text', placeholder = '', required = false, form, errors, onChange }) => {
+  const fieldStyle = {
+    ...inputBase,
+    border: `1px solid ${errors[fieldKey] ? '#FECACA' : C.border}`,
+    backgroundColor: errors[fieldKey] ? '#FEF2F2' : C.card,
+  };
+  const focusStyle = (e) => { e.target.style.borderColor = C.accent; e.target.style.boxShadow = `0 0 0 3px ${C.accentLight}`; };
+  const blurStyle  = (e) => { e.target.style.borderColor = errors[fieldKey] ? '#FECACA' : C.border; e.target.style.boxShadow = 'none'; };
+
+  return (
+    <div>
+      <label style={labelStyle}>
+        {label}{required && <span style={{ color: '#DC2626', marginLeft: 2 }}>*</span>}
+      </label>
+      <input
+        type={type}
+        value={form[fieldKey] ?? ''}
+        placeholder={placeholder}
+        onChange={(e) => onChange(fieldKey, e.target.value)}
+        style={fieldStyle}
+        onFocus={focusStyle}
+        onBlur={blurStyle}
+      />
+      {errors[fieldKey] && <p style={errStyle}>{errors[fieldKey]}</p>}
+    </div>
+  );
+};
+
+const Sel = ({ label, fieldKey, options, labelFn, required = false, form, errors, onChange }) => {
+  const fieldStyle = {
+    ...inputBase,
+    border: `1px solid ${errors[fieldKey] ? '#FECACA' : C.border}`,
+    backgroundColor: errors[fieldKey] ? '#FEF2F2' : C.card,
+  };
+  const focusStyle = (e) => { e.target.style.borderColor = C.accent; e.target.style.boxShadow = `0 0 0 3px ${C.accentLight}`; };
+  const blurStyle  = (e) => { e.target.style.borderColor = errors[fieldKey] ? '#FECACA' : C.border; e.target.style.boxShadow = 'none'; };
+
+  return (
+    <div>
+      <label style={labelStyle}>
+        {label}{required && <span style={{ color: '#DC2626', marginLeft: 2 }}>*</span>}
+      </label>
+      <select
+        value={form[fieldKey] ?? ''}
+        onChange={(e) => onChange(fieldKey, e.target.value)}
+        style={fieldStyle}
+        onFocus={focusStyle}
+        onBlur={blurStyle}
+      >
+        <option value="">Choisir…</option>
+        {options.map((o) => <option key={o.id} value={o.id}>{labelFn(o)}</option>)}
+      </select>
+      {errors[fieldKey] && <p style={errStyle}>{errors[fieldKey]}</p>}
+    </div>
+  );
+};
+
+const Section = ({ num, title, children }) => (
+  <div
+    className="rounded-xl overflow-hidden"
+    style={{ border: `1px solid ${C.border}`, boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}
+  >
+    <div
+      className="flex items-center gap-3 px-5 py-3"
+      style={{ backgroundColor: C.tableHead, borderBottom: `1px solid ${C.border}` }}
+    >
+      <span
+        className="w-6 h-6 rounded-lg flex items-center justify-center text-white text-xs font-bold shrink-0"
+        style={{ backgroundColor: C.accent }}
+      >
+        {num}
+      </span>
+      <span
+        className="text-xs font-semibold uppercase tracking-wider"
+        style={{ color: C.textMuted }}
+      >
+        {title}
+      </span>
+    </div>
+    <div className="p-5 space-y-4" style={{ backgroundColor: C.card }}>
+      {children}
+    </div>
+  </div>
+);
+
+/* ── Composant principal ── */
+
 export default function NouveauxEtudiants() {
   const [form,      setForm]      = useState(emptyForm);
   const [errors,    setErrors]    = useState({});
@@ -110,86 +202,11 @@ export default function NouveauxEtudiants() {
     } finally { setSaving(false); }
   };
 
-  /* ── Helpers de rendu de champs ── */
-  const labelStyle  = { display: 'block', fontSize: '13px', fontWeight: 500, color: C.textPrimary, marginBottom: '6px' };
-  const errStyle    = { fontSize: '12px', color: '#DC2626', marginTop: '4px' };
-
-  const fieldStyle = (key) => ({
-    ...inputBase,
-    border: `1px solid ${errors[key] ? '#FECACA' : C.border}`,
-    backgroundColor: errors[key] ? '#FEF2F2' : C.card,
-  });
-
-  const focusStyle = (e) => { e.target.style.borderColor = C.accent; e.target.style.boxShadow = `0 0 0 3px ${C.accentLight}`; };
-  const blurStyle  = (e, key) => { e.target.style.borderColor = errors[key] ? '#FECACA' : C.border; e.target.style.boxShadow = 'none'; };
-
-  const Field = ({ label, fieldKey, type = 'text', placeholder = '', required = false }) => (
-    <div>
-      <label style={labelStyle}>{label}{required && <span style={{ color: '#DC2626', marginLeft: 2 }}>*</span>}</label>
-      <input
-        type={type}
-        value={form[fieldKey] ?? ''}
-        placeholder={placeholder}
-        onChange={(e) => onChange(fieldKey, e.target.value)}
-        style={fieldStyle(fieldKey)}
-        onFocus={focusStyle}
-        onBlur={(e) => blurStyle(e, fieldKey)}
-      />
-      {errors[fieldKey] && <p style={errStyle}>{errors[fieldKey]}</p>}
-    </div>
-  );
-
-  const Sel = ({ label, fieldKey, options, labelFn, required = false }) => (
-    <div>
-      <label style={labelStyle}>{label}{required && <span style={{ color: '#DC2626', marginLeft: 2 }}>*</span>}</label>
-      <select
-        value={form[fieldKey] ?? ''}
-        onChange={(e) => onChange(fieldKey, e.target.value)}
-        style={fieldStyle(fieldKey)}
-        onFocus={focusStyle}
-        onBlur={(e) => blurStyle(e, fieldKey)}
-      >
-        <option value="">Choisir…</option>
-        {options.map((o) => <option key={o.id} value={o.id}>{labelFn(o)}</option>)}
-      </select>
-      {errors[fieldKey] && <p style={errStyle}>{errors[fieldKey]}</p>}
-    </div>
-  );
-
-  /* ── Bloc de section ── */
-  const Section = ({ num, title, children }) => (
-    <div
-      className="rounded-xl overflow-hidden"
-      style={{ border: `1px solid ${C.border}`, boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}
-    >
-      <div
-        className="flex items-center gap-3 px-5 py-3"
-        style={{ backgroundColor: C.tableHead, borderBottom: `1px solid ${C.border}` }}
-      >
-        <span
-          className="w-6 h-6 rounded-lg flex items-center justify-center text-white text-xs font-bold shrink-0"
-          style={{ backgroundColor: C.accent }}
-        >
-          {num}
-        </span>
-        <span
-          className="text-xs font-semibold uppercase tracking-wider"
-          style={{ color: C.textMuted }}
-        >
-          {title}
-        </span>
-      </div>
-      <div className="p-5 space-y-4" style={{ backgroundColor: C.card }}>
-        {children}
-      </div>
-    </div>
-  );
+  const sharedProps = { form, errors, onChange };
 
   return (
-    <div
-      className="space-y-5 max-w-3xl"
-      style={{ fontFamily: "'DM Sans', sans-serif" }}
-    >
+    <div className="space-y-5 max-w-3xl" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
@@ -250,7 +267,6 @@ export default function NouveauxEtudiants() {
 
       {/* Section 1 — Informations personnelles */}
       <Section num="1" title="Informations personnelles">
-        {/* Photo */}
         <div
           className="flex justify-center py-4 rounded-xl"
           style={{ backgroundColor: C.bg, border: `1px solid ${C.border}` }}
@@ -264,17 +280,17 @@ export default function NouveauxEtudiants() {
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <Sel label="Civilité" fieldKey="civilites_id" options={civilites} labelFn={(o) => `${o.abreviation ?? ''} ${o.libelle}`} required />
-          <Sel label="Pays d'origine" fieldKey="pays_id" options={pays} labelFn={(o) => o.libelle} required />
+          <Sel label="Civilité" fieldKey="civilites_id" options={civilites} labelFn={(o) => `${o.abreviation ?? ''} ${o.libelle}`} required {...sharedProps} />
+          <Sel label="Pays d'origine" fieldKey="pays_id" options={pays} labelFn={(o) => o.libelle} required {...sharedProps} />
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <Field label="Nom" fieldKey="nom" placeholder="OUEDRAOGO" required />
-          <Field label="Prénoms" fieldKey="prenoms" placeholder="Aminata" required />
+          <Field label="Nom" fieldKey="nom" placeholder="OUEDRAOGO" required {...sharedProps} />
+          <Field label="Prénoms" fieldKey="prenoms" placeholder="Aminata" required {...sharedProps} />
         </div>
         <div className="grid grid-cols-3 gap-4">
-          <Field label="Date de naissance" fieldKey="dateNaissance" type="date" />
-          <Field label="Email" fieldKey="email" type="email" placeholder="ex@email.com" />
-          <Field label="Téléphone" fieldKey="telephone" placeholder="+226 70 00 00 00" />
+          <Field label="Date de naissance" fieldKey="dateNaissance" type="date" {...sharedProps} />
+          <Field label="Email" fieldKey="email" type="email" placeholder="ex@email.com" {...sharedProps} />
+          <Field label="Téléphone" fieldKey="telephone" placeholder="+226 70 00 00 00" {...sharedProps} />
         </div>
       </Section>
 
@@ -285,18 +301,18 @@ export default function NouveauxEtudiants() {
             label="Parcours" fieldKey="parcours_id"
             options={parcours}
             labelFn={(o) => `${o.libelle} — ${o.specialite_libelle ?? ''} ${o.niveau_libelle ?? ''}`}
-            required
+            required {...sharedProps}
           />
           <Sel
             label="Année académique" fieldKey="annee_academique_id"
             options={annees}
             labelFn={(o) => `${o.libelle}${o.est_active ? ' ✓' : ''}`}
-            required
+            required {...sharedProps}
           />
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <Sel label="Décision" fieldKey="decisions_id" options={decisions} labelFn={(o) => o.libelle} required />
-          <Field label="Date d'inscription" fieldKey="dateInscription" type="date" required />
+          <Sel label="Décision" fieldKey="decisions_id" options={decisions} labelFn={(o) => o.libelle} required {...sharedProps} />
+          <Field label="Date d'inscription" fieldKey="dateInscription" type="date" required {...sharedProps} />
         </div>
       </Section>
 

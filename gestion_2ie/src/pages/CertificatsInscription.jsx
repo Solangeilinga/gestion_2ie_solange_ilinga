@@ -327,7 +327,10 @@ export default function CertificatsInscription() {
                           : '—'}
                       </span>
                       , de nationalité{' '}
-                      <span className="font-semibold" style={{ color: C.textPrimary }}>{selected.pays_libelle}</span>
+                      {/* ✅ pays_nationalite à la place de pays_libelle */}
+                      <span className="font-semibold" style={{ color: C.textPrimary }}>
+                        {selected.pays_nationalite ?? selected.pays_libelle}
+                      </span>
                     </p>
                     <p>
                       est régulièrement inscrit(e) pour l'année académique{' '}
@@ -360,10 +363,10 @@ export default function CertificatsInscription() {
                           className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-2"
                           style={{ border: `2px solid ${C.accent}` }}
                         >
+                          {/* ✅ "Signature" supprimé */}
                           <span className="text-[8px] text-center leading-tight" style={{ color: C.accent }}>Cachet officiel</span>
                         </div>
                         <p className="text-xs font-medium" style={{ color: C.textPrimary }}>Le Directeur</p>
-                        <p className="text-xs" style={{ color: C.textMuted }}>Signature</p>
                       </div>
                     </div>
                   </div>

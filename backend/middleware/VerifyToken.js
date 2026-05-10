@@ -1,5 +1,8 @@
+// middleware/verifyToken.js
 const jwt = require('jsonwebtoken');
-const JWT_SECRET = process.env.JWT_SECRET || 'votre_secret_tres_long_et_aleatoire';
+
+// ✅ JWT_SECRET depuis les variables d'environnement uniquement
+const JWT_SECRET = process.env.JWT_SECRET;
 
 module.exports = (req, res, next) => {
   const authHeader = req.headers['authorization'];
